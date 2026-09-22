@@ -1,24 +1,25 @@
-# Custom ERPNext image: base Frappe/ERPNext image + our custom loan theme app
+# Custom ERPNext image
 FROM frappe/erpnext:v15.28.1
 
 USER frappe
 WORKDIR /home/frappe/frappe-bench
 
-# Copy the custom branding/loan theme app into the bench apps directory
+# Copy custom loan theme app
 COPY --chown=frappe:frappe apps/custom_loan_theme ./apps/custom_loan_theme
 
-# Register the custom app on a separate line in sites/apps.txt,
-# install it as an editable Python package, and build its assets.
-RUN sed -i '$a custom_loan_theme' sites/apps.txt && \
-    pip install --no-cache-dir -e ./apps/custom_loan_theme && \
-    bench build --app custom_loan_theme
+# Add custom app to apps.txt
+RUN echo "custom_loan_theme" >> sites/apps.txt
 
-# Copy the custom entrypoint
+# Install custom app
+RUN pip install --no-cache-dir -e ./apps/custom_loan_theme
+
+# Build custom app assets
+RUN bench build --app custom_loan_theme
+
+# Copy entrypoint
 COPY --chown=frappe:frappe entrypoint.sh /home/frappe/entrypoint.sh
 
 USER root
-
-# Make the entrypoint executable
 RUN chmod +x /home/frappe/entrypoint.sh
 
 USER frappe
