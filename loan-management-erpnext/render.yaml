@@ -1,0 +1,53 @@
+services:
+  # --- Database (private service, pulls the official MariaDB image) -----
+  - type: pserv
+    name: loan-mariadb
+    runtime: image
+    image:
+      url: docker.io/library/mariadb:10.6
+    plan: starter
+    disk:
+      name: mariadb-data
+      mountPath: /var/lib/mysql
+      sizeGB: 5
+    envVars:
+      - key: MYSQL_ROOT_PASSWORD
+        generateValue: true
+
+  # --- Redis (one instance, used for both cache and queue) --------------
+  - type: pserv
+    name: loan-redis
+    runtime: image
+    image:
+      url: docker.io/library/redis:7-alpine
+    plan: starter
+
+  # --- ERPNext itself: web + websocket + worker + scheduler in ONE ------
+  # service via `bench start`. Render does not support a disk shared
+  # across multiple services, so everything that needs the "sites" data
+  # lives together here. This is the simplest reliable setup; it scales
+  # vertically (bigger instance) rather than horizontally.
+  - type: web
+    name: loan-erpnext
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    envVars:
+      - key: SITE_NAME
+        value: loan.local
+      - key: DB_HOST
+        value: loan-mariadb
+      - key: DB_ROOT_PASSWORD
+        fromService:
+          name: loan-mariadb
+          type: pserv
+          envVarKey: MYSQL_ROOT_PASSWORD
+      - key: REDIS_URL
+        value: redis://loan-redis:6379
+      - key: ADMIN_PASSWORD
+        generateValue: true
+    disk:
+      name: sites-data
+      mountPath: /home/frappe/frappe-bench/sites
+      sizeGB: 5
+    healthCheckPath: /api/method/ping

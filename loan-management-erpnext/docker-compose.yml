@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  mariadb:
+    image: mariadb:10.6
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-changeit}
+    volumes:
+      - mariadb-data:/var/lib/mysql
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+  erpnext:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      SITE_NAME: loan.local
+      DB_HOST: mariadb
+      DB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-changeit}
+      REDIS_URL: redis://redis:6379
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin}
+    ports:
+      - "8000:8000"
+      - "9000:9000"
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+    depends_on:
+      - mariadb
+      - redis
+
+volumes:
+  mariadb-data:
+  sites:

@@ -1,0 +1,92 @@
+/* Attractive login screen for the Loan Management System */
+
+body.login-page,
+.page_content.for-login {
+	min-height: 100vh;
+	background: linear-gradient(135deg, #0f2027 0%, #203a43 45%, #2c5364 100%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.page_content.for-login::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	background: radial-gradient(circle at 20% 20%, rgba(0, 200, 150, 0.25), transparent 40%),
+		radial-gradient(circle at 80% 80%, rgba(0, 120, 255, 0.25), transparent 40%);
+	pointer-events: none;
+}
+
+.page-card {
+	border-radius: 18px;
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+	border: none;
+	padding: 2.5rem 2.25rem;
+	background: #ffffff;
+	max-width: 400px;
+	width: 100%;
+	position: relative;
+	z-index: 1;
+	animation: cardIn 0.5s ease-out;
+}
+
+@keyframes cardIn {
+	from { opacity: 0; transform: translateY(16px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+.page-card .page-card-head img.app-logo,
+.page-card .brand-logo {
+	max-height: 56px;
+	margin-bottom: 1rem;
+}
+
+.page-card-head::after {
+	content: "Loan Management System";
+	display: block;
+	font-size: 1.3rem;
+	font-weight: 700;
+	color: #1b2a4a;
+	margin-top: 0.25rem;
+	margin-bottom: 0.5rem;
+}
+
+.page-card .form-control {
+	border-radius: 10px;
+	border: 1px solid #d8dce6;
+	padding: 0.65rem 0.9rem;
+	font-size: 0.95rem;
+}
+
+.page-card .form-control:focus {
+	border-color: #2c8ce0;
+	box-shadow: 0 0 0 3px rgba(44, 140, 224, 0.15);
+}
+
+.page-card .btn-primary,
+.page-card button[type="submit"] {
+	background: linear-gradient(135deg, #1c92d2, #2c5364);
+	border: none;
+	border-radius: 10px;
+	padding: 0.65rem 1rem;
+	font-weight: 600;
+	width: 100%;
+	transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.page-card .btn-primary:hover,
+.page-card button[type="submit"]:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 8px 20px rgba(28, 146, 210, 0.35);
+}
+
+.page-card a {
+	color: #1c92d2;
+}
+
+.for-forgot,
+.social-logins {
+	text-align: center;
+	margin-top: 0.75rem;
+}
